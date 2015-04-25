@@ -1,0 +1,118 @@
+plugins {
+    id "io.ratpack.ratpack-java" version "0.9.15"
+    id "idea"
+}
+
+if (!JavaVersion.current().java8Compatible) {
+    throw new IllegalStateException("Must be built with Java 8 or higher")
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+group = 'fr.javatic.ratpack'
+version = "0.1"
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile ratpack.dependency("jackson")
+    compile ratpack.dependency("rx")
+
+    compile 'org.slf4j:slf4j-api:1.7.7'
+    compile 'io.reactivex:rxjava-async-util:0.21.0'
+}
+
+idea {
+    project {
+        languageLevel "1.8"
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+def projectInfo = [
+        description: 'Livereload server based on ratpack',
+        url        : 'https://github.com/ylemoigne/ratpack-livereload',
+        issues     : 'https://github.com/ylemoigne/ratpack-livereload/issues',
+        tags       : ['livereload', 'ratpack'],
+        scm        : [
+                url     : "git@github.com:ylemoigne/ratpack-livereload.git",
+                mavenUrl: "scm:git:git@github.com:ylemoigne/ratpack-livereload.git",
+        ],
+        license    : [
+                shortName: 'Apache-2.0',
+                fullName : 'The Apache Software License, Version 2.0',
+                url      : 'http://www.apache.org/licenses/LICENSE-2.0.txt',
+        ]
+]
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            Artifact sourcesJar
+            Artifact javadocJar
+
+            pom.withXml {
+                asNode().children().last() + {
+                    resolveStrategy = Closure.DELEGATE_FIRST
+
+                    name project.name
+                    description projectInfo.description
+                    url projectInfo.url
+
+                    scm {
+                        connection projectInfo.scm.mavenUrl
+                        developerConnection projectInfo.scm.mavenUrl
+                        url projectInfo.scm.url
+                    }
+
+                    licenses {
+                        license {
+                            name projectInfo.license.fullName
+                            url projectInfo.license.url
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            name "Yann Le Moigne"
+                            email "ylemoigne@javatic.fr"
+                            organization "JavaTIC"
+                            organizationUrl "http://www.javatic.fr"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+bintray {
+    user = bintrayUser
+    key = bintrayKey
+    publications = ['mavenJava']
+    pkg {
+        repo = 'maven'
+        name = project.name
+        desc = projectInfo.description
+        websiteUrl = projectInfo.url
+        issueTrackerUrl = projectInfo.issues
+        vcsUrl = projectInfo.scm.url
+        licenses = [projectInfo.license.shortName]
+        labels = projectInfo.tags
+        version {
+            gpg {
+                sign = true
+                passphrase = gpgPassphrase
+            }
+        }
+    }
+}
