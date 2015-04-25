@@ -1,6 +1,8 @@
 plugins {
     id "io.ratpack.ratpack-java" version "0.9.15"
     id "idea"
+    id "maven-publish"
+    id "com.jfrog.bintray" version "1.1"
 }
 
 if (!JavaVersion.current().java8Compatible) {
