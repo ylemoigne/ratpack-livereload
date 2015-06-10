@@ -21,9 +21,10 @@ Gradle
     }
 
     dependencies {
-        compile 'fr.javatic.ratpack:ratpack-livereload:0.1'
+        compile 'fr.javatic.ratpack:ratpack-livereload:0.2'
     }
 
 Changelog.
 ------
 0.1   : Initial Release
+0.2   : Upgrade to ratpack 0.9.17

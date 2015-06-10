@@ -56,7 +56,7 @@ public class LiveReloadServer {
         LiveReloadWebSocketHandler liveReloadWebSocketHandler = new LiveReloadWebSocketHandler(fileWatchStream);
         try {
             ratpackServer = RatpackServer.of(builder -> builder
-                    .serverConfig(ServerConfig.findBaseDirProps("dev/ratpack.properties").development(true).port(35729))
+                    .serverConfig(ServerConfig.findBaseDir("dev/ratpack.properties").development(true).port(35729))
                     .handlers(chain -> {
                         chain.get("livereload.js", ctx -> {
                             ctx.getResponse().sendFile(ctx.get(ServerConfig.class).getBaseDir().file("livereload.js"));
